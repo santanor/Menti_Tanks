@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Tank.h"
 #include "AIController.h"
 #include "TankAIController.generated.h"
 
@@ -14,6 +15,10 @@ class MENTI_TANKS_API ATankAIController : public AAIController
 	GENERATED_BODY()
 	
 	
+private:
+	ATank* GetControlledTank() const;
+	void BeginPlay() override;
+	ATank* GetPlayerTank() const;
 	
 	
 };
