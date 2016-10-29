@@ -13,13 +13,8 @@ Saved
 *.xcodeproj
 *.xcworkspace
 *.umap
-<<<<<<< HEAD
 Content/StarterContent/*
-=======
->>>>>>> 37f099842335bf2bd7e58a53436c2bbacf27444e
-=======
-=======
->>>>>>> c7222a8752cfa83e7649c7380bb364a96f071f5d
+Content/StarterContent/*.umap
 # Visual Studio 2015 user specific files
 .vs/
 
