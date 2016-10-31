@@ -2,6 +2,7 @@
 
 #include "Menti_Tanks.h"
 #include "TankBarrel.h"
+#include "TankTurret.h"
 #include "TankAimingComponent.h"
 
 
@@ -18,7 +19,7 @@ UTankAimingComponent::UTankAimingComponent()
 
 void UTankAimingComponent::AimAt(FVector AimLocation,float LaunchSpeed)
 {
-	if (!Barrel) return;
+	if (!Barrel || !Turret) return;
 	
 	FVector OutLaunchVelocity;
 	FVector StartLocation = Barrel->GetSocketLocation(FName("Projectile"));
@@ -28,7 +29,11 @@ void UTankAimingComponent::AimAt(FVector AimLocation,float LaunchSpeed)
 		OutLaunchVelocity,
 		StartLocation,
 		AimLocation,
-		LaunchSpeed
+		LaunchSpeed,
+		false, 
+		0,
+		0,
+		ESuggestProjVelocityTraceOption::DoNotTrace
 	))
 	{
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
@@ -41,12 +46,18 @@ void UTankAimingComponent::SetBarrelReference(UTankBarrel * BarrelToSet)
 	Barrel = BarrelToSet;
 }
 
+void UTankAimingComponent::SetTurretReference(UTankTurret* TurretToSet)
+{
+	Turret = TurretToSet;
+}
+
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	auto AimAsRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimAsRotator - BarrelRotator;
 
-	Barrel->Elevate(5);
+	Barrel->Elevate(DeltaRotator.Pitch);
+	Turret->Rotate(DeltaRotator.Yaw);
 }
 
