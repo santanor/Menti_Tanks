@@ -3,13 +3,13 @@
 #include "Menti_Tanks.h"
 #include "TankPlayerController.h"
 
-void ATankPlayerController::BeginPlay() 
+void ATankPlayerController::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
 }
 
 void ATankPlayerController::Tick(float DeltaTime)
-{	
+{
 	Super::Tick(DeltaTime);
 	AimTowardsCrosshair();
 }
@@ -28,7 +28,7 @@ void ATankPlayerController::AimTowardsCrosshair()
 	FVector HitLocation; //Out parameter
 	if (GetSightRayHitLocation(HitLocation))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit location: %s"), *HitLocation.ToString())
+		GetControlledTank()->AimAt(HitLocation);
 	}
 }
 
@@ -42,12 +42,32 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& HitLocation) const
 	FVector LookDirection;
 	if (GetLookDirection(ScreenLocation, LookDirection))
 	{
-
+		GetLookVectorHitLocation(LookDirection, HitLocation);
 	}
-	
+
 
 
 	return true;
+}
+
+bool ATankPlayerController::GetLookVectorHitLocation(FVector LookDirection, FVector& HitLocation) const
+{
+	FHitResult HitResult;
+	auto StartLocation = PlayerCameraManager->GetCameraLocation();
+	auto EndLocation = StartLocation + (LookDirection * LineTraceRange);
+
+	if (GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		StartLocation,
+		EndLocation,
+		ECollisionChannel::ECC_Visibility
+	))
+	{
+		HitLocation = HitResult.Location;
+		return true;
+	}
+	HitLocation = FVector(0.f);
+	return false;
 }
 
 bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection)const

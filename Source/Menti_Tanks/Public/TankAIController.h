@@ -17,7 +17,8 @@ class MENTI_TANKS_API ATankAIController : public AAIController
 	
 private:
 	ATank* GetControlledTank() const;
-	void BeginPlay() override;
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 	ATank* GetPlayerTank() const;
 	
 	
