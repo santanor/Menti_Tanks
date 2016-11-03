@@ -36,9 +36,15 @@ void UTankAimingComponent::AimAt(FVector AimLocation,float LaunchSpeed)
 		ESuggestProjVelocityTraceOption::DoNotTrace
 	))
 	{
+		//UE_LOG(LogTemp, Warning, TEXT("Aiming Vector: %s"), *AimLocation.ToString())
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
-		MoveBarrelTowards(AimLocation);
+		MoveBarrelTowards(AimDirection);
 	}	
+	else
+	{
+		MoveBarrelTowards(FVector::ForwardVector);
+		//UE_LOG(LogTemp, Warning, TEXT("No solution found"))
+	}
 }
 
 void UTankAimingComponent::SetBarrelReference(UTankBarrel * BarrelToSet)

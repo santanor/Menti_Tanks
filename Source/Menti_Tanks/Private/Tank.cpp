@@ -1,17 +1,21 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Menti_Tanks.h"
+#include "TankBarrel.h"
+#include "Projectile.h"
 #include "Tank.h"
 
 
 void ATank::SetBarrelReference(UTankBarrel * BarrelToSet)
 {
 	TankAimingComponent->SetBarrelReference(BarrelToSet);
+	Barrel = BarrelToSet;
 }
 
 void ATank::SetTurretReference(UTankTurret* TurretToSet)
 {
 	TankAimingComponent->SetTurretReference(TurretToSet);
+	Turret = TurretToSet;
 }
 
 // Sets default values
@@ -40,5 +44,20 @@ void ATank::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 {
 	Super::SetupPlayerInputComponent(InputComponent);
 
+}
+
+void ATank::Fire()
+{
+	bool isReloaded = (GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeInSeconds;
+	//UE_LOG(LogTemp, Warning, TEXT("At second %f Tank %s last fire time %f isReloaded %b"), GetWorld()->GetTimeSeconds(),  *GetName(), LastFireTime, isReloaded)
+	if (!Barrel || !isReloaded) return;
+
+	auto Projectile = GetWorld()->SpawnActor<AProjectile>(
+			ProjectileBlueprint,
+		Barrel->GetSocketLocation(FName("Projectile")),
+		Barrel->GetSocketRotation(FName("Projectile"))
+		);
+	Projectile->LaunchProjectile(LaunchSpeed);
+	LastFireTime = GetWorld()->GetTimeSeconds();
 }
 
